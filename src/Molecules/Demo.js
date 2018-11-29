@@ -69,8 +69,8 @@ class Demo extends Component {
                     </CardLabel>
                 </CardHeader>
                 <CardBlock>
-                    <CityZipCode/>
                     <CountryDropdown/>
+                    <CityZipCode/>
                 </CardBlock>
             </Card>
         );

@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
-import { Input } from 'antd';
+import {Select} from 'antd';
+import {search} from "../Module/GoogleMap";
 import styled from 'styled-components';
+
+const Option = Select.Option;
 
 const Row = styled.div`
     float: left;
@@ -23,11 +26,26 @@ const Label = styled.label`
 `;
 
 class CityZipCode extends Component {
+
+    componentDidMount() {
+        search();
+    }
+
     render() {
         return (
             <Row>
                 <Label>City / Zip Code</Label>
-                <Input size="large" placeholder="Enter city or zip code" />
+                <Select
+                    size="default"
+                    showSearch
+                    style={{width: 200}}
+                    placeholder="Enter city or zip code"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                >
+                    <Option value="jack">Jack</Option>
+                    <Option value="lucy">Lucy</Option>
+                    <Option value="tom">Tom</Option>
+                </Select>
             </Row>
         );
     }
