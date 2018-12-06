@@ -49,6 +49,10 @@ const StepTitle = styled.div`
     float: left;
     padding-top: 7.5px;
     padding-left: 6px;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 19px;
+    color: #373848;
 `;
 
 const CardBlock = styled.div`
@@ -59,18 +63,30 @@ const CardBlock = styled.div`
 `;
 
 class Demo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            region: 'VN',
+            city: undefined
+        }
+    }
+
     render() {
+        const {region, city} = this.state;
+        const setRegion = (region) => this.setState({region, city: undefined}),
+            setCity = (city) => this.setState({city});
+
         return (
             <Card>
                 <CardHeader>
                     <CardLabel>
-                        <StepNumber>1</StepNumber>
+                        {/*<StepNumber>1</StepNumber>*/}
                         <StepTitle>Pickup goods from</StepTitle>
                     </CardLabel>
                 </CardHeader>
                 <CardBlock>
-                    <CityZipCode/>
-                    <CountryDropdown/>
+                    <CountryDropdown region={region} setRegion={setRegion}/>
+                    <CityZipCode region={region} city={city} setCity={setCity}/>
                 </CardBlock>
             </Card>
         );
