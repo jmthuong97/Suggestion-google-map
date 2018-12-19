@@ -67,26 +67,26 @@ class Demo extends Component {
         super(props);
         this.state = {
             region: 'VN',
-            city: undefined
+            location: undefined
         }
     }
 
     render() {
-        const {region, city} = this.state;
-        const setRegion = (region) => this.setState({region, city: undefined}),
-            setCity = (city) => this.setState({city});
+        const {region, location} = this.state;
+        const setRegion = (region) => this.setState({region, location: undefined}),
+            setLocation = (location) => this.setState({location});
 
         return (
             <Card>
                 <CardHeader>
                     <CardLabel>
-                        {/*<StepNumber>1</StepNumber>*/}
-                        <StepTitle>Pickup goods from</StepTitle>
+                        <StepNumber>1</StepNumber>
+                        <StepTitle>Pick Location from country</StepTitle>
                     </CardLabel>
                 </CardHeader>
                 <CardBlock>
                     <CountryDropdown region={region} setRegion={setRegion}/>
-                    <CityZipCode region={region} city={city} setCity={setCity}/>
+                    <CityZipCode region={region} value={location} setLocation={setLocation}/>
                 </CardBlock>
             </Card>
         );

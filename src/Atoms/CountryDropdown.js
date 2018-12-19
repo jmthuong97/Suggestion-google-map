@@ -29,10 +29,7 @@ class CountryDropdown extends Component {
     render() {
         const {setRegion, region} = this.props;
         const ListOption = data_nations.data.map(nation => {
-            return <Option key={nation.code} value={nation.code}>
-                <p>{nation.name}</p>
-                <p>asdas</p>
-            </Option>;
+            return <Option key={nation.code} value={nation.code}>{nation.name}</Option>;
         });
 
         return (

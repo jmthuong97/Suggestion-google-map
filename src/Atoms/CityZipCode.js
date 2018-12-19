@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import _ from 'lodash';
+import Script from 'react-load-script';
 import {Select, Icon, Spin} from 'antd';
-import {test} from "../Module/GoogleMap";
 import styled from 'styled-components';
 
 const Option = Select.Option;
@@ -37,8 +37,11 @@ class CityZipCode extends Component {
         this.delayedCallback = _.debounce(this.onSearch, 500);
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({region: nextProps.region})
+    static getDerivedStateFromProps(props, state) {
+        return {
+            ...state,
+            region: props.region
+        }
     }
 
     handleSearch = (value) => {
@@ -47,24 +50,35 @@ class CityZipCode extends Component {
     };
 
     onSearch = (value) => {
+        if (!value) {
+            this.setState({isLoading: false});
+            return;
+        }
         const {region} = this.state;
-        test(region, value)
-            .then(data => {
-                data = data.data;
-                if (data.status === "OK") this.setState({suggestion: data.predictions});
-                else this.setState({suggestion: []});
-            })
-            .catch(err => console.log(err));
-        this.setState({isLoading: false});
+
+        // Initialize Google Autocomplete
+        /*global google*/ // To disable any eslint 'google not defined' errors
+        let service = new google.maps.places.AutocompleteService();
+        service.getPlacePredictions({
+            input: value,
+            types: ['(cities)'],
+            componentRestrictions: {country: region}
+        }, (data) => this.setState({suggestion: data ? Object.values(data) : []}));
+        this.setState({isLoading: false})
     };
 
     render() {
-        const {city, setCity} = this.props;
+        const {value, setLocation} = this.props;
         const {suggestion, isLoading} = this.state;
-        const ListOption = suggestion.map((data, index) => {
+        let ListOption = suggestion.map(data => {
             let main_text = data.structured_formatting.main_text;
             let secondary_text = data.structured_formatting.secondary_text;
-            return (<Option key={index} value={main_text}>
+            let location = {
+                city: main_text,
+                address: secondary_text,
+                id: data.id
+            };
+            return (<Option key={data.id} data-location={location} value={data.id}>
                 <Icon type="environment" theme="filled"/>
                 <b> {main_text} </b>{secondary_text}
             </Option>)
@@ -73,16 +87,20 @@ class CityZipCode extends Component {
         return (
             <Row>
                 <Label>City / Zip Code</Label>
+                <Script
+                    url="https://maps.googleapis.com/maps/api/js?key=AIzaSyDQQEd-25h1vNZwMxk1z-odE3EqAO6__UU&libraries=places"/>
                 <Select
                     showSearch
                     size="default"
                     style={{width: '100%'}}
                     placeholder="Enter city or zip code"
                     defaultActiveFirstOption={false}
-                    value={city}
+                    value={value ? value.id : undefined}
                     suffixIcon={isLoading ? <Spin size="small"/> : null}
+                    notFoundContent={null}
+                    filterOption={false}
                     onSearch={this.handleSearch}
-                    onSelect={value => setCity(value)}
+                    onSelect={(value, option) => setLocation(option.props["data-location"])}
                 >
                     {ListOption}
                 </Select>
